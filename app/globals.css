@@ -81,13 +81,11 @@ button:focus-visible, a:focus-visible, summary:focus-visible {
 /* Hero */
 .hero {
   position: relative;
-  display: grid;
+  display: block;
   min-height: 100vh;
-  grid-template-columns: 1fr 1.25fr;
-  align-items: center;
-  gap: 5vw;
   padding: 150px var(--pad) 50px;
 }
+.hero-copy { max-width: 760px; }
 .hero h1 {
   margin: 22px 0 34px;
   font: 300 clamp(100px, 18vw, 280px)/.72 var(--serif);
@@ -116,12 +114,21 @@ button:focus-visible, a:focus-visible, summary:focus-visible {
   color: var(--paper);
   transform: rotate(-45deg);
 }
-.hero-sheet { position: relative; }
-.hero-sheet::after {
+.hero-building {
+  position: relative;
+  width: min(100%, 1420px);
+  margin-top: clamp(70px, 9vw, 130px);
+  margin-right: calc(var(--pad) * -1);
+  margin-left: calc(var(--pad) * -1);
+  padding: 0 var(--pad);
+  border-top: 1px solid var(--line);
+  padding-top: 22px;
+}
+.hero-building::after {
   display: block;
   margin-top: 12px;
   color: var(--muted);
-  content: 'Section through a cultural centre / A-01';
+  content: 'Brutalist civic centre / Section A-01 / 1:200';
   font: 10px var(--mono);
 }
 .building-drawing {
@@ -142,6 +149,10 @@ button:focus-visible, a:focus-visible, summary:focus-visible {
 }
 .building-ground { fill: var(--paper) !important; stroke: none !important; }
 .building-hatch { fill: url('#ground-hatch') !important; stroke: none !important; }
+.building-mass { fill: var(--rust) !important; stroke: var(--ink) !important; stroke-width: 2; }
+.building-mass-dark { fill: var(--dark) !important; stroke: var(--dark) !important; }
+.building-mass-light { fill: var(--sage) !important; stroke: var(--ink) !important; }
+.building-cutout { fill: var(--bg) !important; stroke: var(--ink) !important; stroke-width: 2; }
 .building-outline { stroke-width: 1.6; }
 .building-detail { stroke-width: .8; opacity: .7; }
 .building-accent { stroke: var(--rust) !important; stroke-width: 1.8; }
@@ -341,9 +352,9 @@ footer button { padding: 0; background: transparent; color: var(--muted); }
   .nav-open { display: flex; }
   .menu-toggle { display: block; background: transparent; font: 11px var(--mono); text-transform: uppercase; }
   .menu-toggle span { display: inline-block; width: 6px; height: 6px; margin-right: 8px; border-radius: 50%; background: var(--rust); }
-  .hero { display: block; min-height: auto; padding-top: 145px; }
+  .hero { min-height: auto; padding-top: 145px; }
   .hero h1 { font-size: clamp(100px, 29vw, 190px); }
-  .hero-sheet { margin-top: 60px; }
+  .hero-building { margin-top: 70px; margin-right: calc(var(--pad) * -1); margin-left: calc(var(--pad) * -1); padding-right: var(--pad); padding-left: var(--pad); }
   .hero-index { position: static; margin-top: 30px; text-align: left; }
   .section-shell { padding-block: 90px; }
   .project-grid { display: block; }

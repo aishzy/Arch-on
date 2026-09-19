@@ -56,8 +56,10 @@ export default function Portfolio() {
               <p>Buildings that reward slow looking.<br />Drawings that make the idea visible.</p>
               <button className="circle-link" onClick={() => jump('work')} aria-label="Scroll to selected work">↘</button>
             </motion.div>
+            <motion.div className="hero-building" initial={{ clipPath: 'inset(0 100% 0 0)' }} animate={{ clipPath: 'inset(0 0% 0 0)' }} transition={{ delay: .55, duration: 1.25, ease }}>
+              <AnimatedBuilding />
+            </motion.div>
           </div>
-          <motion.div className="hero-sheet" initial={{ clipPath: 'inset(0 100% 0 0)' }} animate={{ clipPath: 'inset(0 0% 0 0)' }} transition={{ delay: .55, duration: 1.25, ease }}><AnimatedBuilding /></motion.div>
           <div className="hero-index">Selected work<br /><span>01—06</span></div>
         </section>
 
