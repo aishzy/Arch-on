@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 
 const lineTransition = (delay: number) => ({
-  duration: 5.7,
+  duration: 3.25,
   delay,
   ease: [1.3, 1, 4.5, 5] as const,
 });
