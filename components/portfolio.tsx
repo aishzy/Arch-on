@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 import { AnimatePresence, motion, useScroll, useSpring } from 'framer-motion';
 import Lenis from 'lenis';
 import { notes, projects, type Project } from '@/lib/projects';
-import Sheet from './Sheet';
-import AnimatedBuilding from './AnimatedBuilding';
+import Sheet from './sheet';
+import AnimatedBuilding from './animated_building';
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -43,7 +43,7 @@ export default function Portfolio() {
         <a className="brand" href="#top" onClick={(event) => { event.preventDefault(); jump('top'); }}>Manku<span> / 26</span></a>
         <button className="menu-toggle" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}><span />Menu</button>
         <nav className={menuOpen ? 'nav nav-open' : 'nav'}>
-          {['work', 'notes', 'about', 'contact'].map((item) => <button key={item} onClick={() => jump(item)}>{item}</button>)}
+          {['projects', 'notes', 'about', 'contact'].map((item) => <button key={item} onClick={() => jump(item)}>{item}</button>)}
         </nav>
       </header>
 
@@ -54,17 +54,17 @@ export default function Portfolio() {
             <motion.h1 initial={{ opacity: 0, y: 70 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .1, duration: 1.1, ease }}>Manku<span>.</span></motion.h1>
             <motion.div className="hero-bottom" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: .8, duration: .8 }}>
               <p>Buildings that reward slow looking.<br />Drawings that make the idea visible.</p>
-              <button className="circle-link" onClick={() => jump('work')} aria-label="Scroll to selected work">↘</button>
+              <button className="circle-link" onClick={() => jump('projects')} aria-label="Scroll to selected projects">↘</button>
             </motion.div>
             <motion.div className="hero-building" initial={{ clipPath: 'inset(0 100% 0 0)' }} animate={{ clipPath: 'inset(0 0% 0 0)' }} transition={{ delay: .55, duration: 1.25, ease }}>
               <AnimatedBuilding />
             </motion.div>
           </div>
-          <div className="hero-index">Selected work<br /><span>01—06</span></div>
+          <div className="hero-index">Projects<br /><span>01—06</span></div>
         </section>
 
-        <section className="work section-shell" id="work">
-          <SectionHeading index="01" title="Selected work" count={`${visibleProjects.length} projects`} />
+        <section className="projects section-shell" id="projects">
+          <SectionHeading index="01" title="Projects" count={`${visibleProjects.length} projects`} />
           <div className="filters">{categories.map((category) => <button key={category} className={active === category ? 'active' : ''} onClick={() => setActive(category)}>{category}</button>)}</div>
           <motion.div layout className="project-grid">{visibleProjects.map((project, index) => <ProjectCard key={project.slug} project={project} index={index} onOpen={() => setSelected(project)} />)}</motion.div>
         </section>
@@ -100,8 +100,8 @@ function ProjectModal({ project, onClose, onSelect }: { project: Project; onClos
         <p>{project.summary}</p>
       </div>
       <div className="sheet-toolbar">
-        <label htmlFor="work-demo">Explore work</label>
-        <select id="work-demo" value={project.slug} onChange={(event) => { const next = projects.find((item) => item.slug === event.target.value); if (next) onSelect(next); }}>
+        <label htmlFor="projects-demo">Explore projects</label>
+        <select id="projects-demo" value={project.slug} onChange={(event) => { const next = projects.find((item) => item.slug === event.target.value); if (next) onSelect(next); }}>
           {projects.map((item) => <option key={item.slug} value={item.slug}>{item.title}</option>)}
         </select>
         <span>Scroll the sheet ↕</span>

@@ -25,6 +25,8 @@ export default function AnimatedBuilding() {
       <motion.rect className="building-mass building-mass-dark" x="486" y="298" width="268" height="142" initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={lineTransition(.55)} style={{ transformOrigin: '486px 440px' }} />
       <motion.rect className="building-mass building-mass-light" x="822" y="258" width="276" height="182" initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={lineTransition(.82)} style={{ transformOrigin: '822px 440px' }} />
       <motion.rect className="building-cutout" x="556" y="348" width="112" height="92" initial={{ scaleY: 0 }} animate={{ scaleY: 1 }} transition={lineTransition(1.1)} style={{ transformOrigin: '556px 440px' }} />
+      <motion.path className="building-brise" d="M822 258H1098M822 278H1098M822 298H1098M822 318H1098M822 338H1098" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={lineTransition(1.15)} />
+      <motion.path className="building-cantilever" d="M274 334H486V298H754" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={lineTransition(1.2)} />
 
       <motion.rect className="building-outline" x="140" y="280" width="320" height="160" pathLength={1} initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={lineTransition(.22)} />
       {[320, 360, 400].map((y, index) => <motion.line key={y} className="building-detail" x1="140" y1={y} x2="460" y2={y} initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={lineTransition(.42 + index * .08)} />)}
