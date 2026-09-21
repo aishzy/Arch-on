@@ -15,6 +15,10 @@
   --header-height: 76px;
 }
 
+favicon {
+  width: 250%;
+}
+
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body {
