@@ -13,11 +13,27 @@ export default function Portfolio() {
   const [active, setActive] = useState('All');
   const [selected, setSelected] = useState<Project | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const lenisRef = useRef<Lenis | null>(null);
   const { scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
   const categories = ['All', ...Array.from(new Set(projects.map((project) => project.category)))];
   const visibleProjects = projects.filter((project) => active === 'All' || project.category === active);
+
+  useEffect(() => {
+    if (!isLoading) {
+      document.body.style.overflow = '';
+      return;
+    }
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    document.body.style.overflow = 'hidden';
+    const timer = window.setTimeout(() => setIsLoading(false), reducedMotion ? 250 : 1900);
+    return () => {
+      window.clearTimeout(timer);
+      document.body.style.overflow = '';
+    };
+  }, [isLoading]);
 
   useEffect(() => {
     const lenis = new Lenis({
@@ -68,6 +84,7 @@ export default function Portfolio() {
 
   return (
     <>
+      <AnimatePresence>{isLoading && <LoadingScreen />}</AnimatePresence>
       <motion.div className="progress" style={{ scaleX: progress }} />
       <header className="site-header">
         <a className="brand" href="#top" onClick={(event) => { event.preventDefault(); jump('top'); }}>Manku<span> / 26</span></a>
@@ -112,7 +129,7 @@ export default function Portfolio() {
           <div className="note-list">{notes.map((note, index) => <motion.details key={note.title} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: .35, margin: '-8% 0px -8% 0px' }} transition={{ delay: index * .08, duration: .7, ease }}><summary><span>{note.title}</span><small>{note.date}</small><b>+</b></summary><motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: .35 }} transition={{ delay: .12, duration: .55, ease }}>{note.text}</motion.p></motion.details>)}</div>
         </section>
 
-        <section className="contact section-shell" id="contact"><motion.p className="eyebrow" initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: .35 }} transition={{ duration: .6, ease }}>04 / Contact</motion.p><motion.h2 initial={{ opacity: 0, y: 36 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: .35 }} transition={{ delay: .08, duration: .8, ease }}>Have a project<br />in mind?</motion.h2><motion.a href="mailto:manku@gmail.com" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: .5 }} transition={{ delay: .18, duration: .7, ease }}>manku@gmail.com <span>↗</span></motion.a><motion.div className="contact-links" initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: .5 }} transition={{ delay: .28, duration: .7, ease }}><a href="#contact">LinkedIn</a><a href="#contact">Instagram</a><a href="#contact">Issuu</a><a href="#contact">Download CV</a></motion.div></section>
+        <section className="contact section-shell" id="contact"><motion.p className="eyebrow" initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: .35 }} transition={{ duration: .6, ease }}>04 / Contact</motion.p><motion.h2 initial={{ opacity: 0, y: 36 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: .35 }} transition={{ delay: .08, duration: .8, ease }}>Have a project<br />in mind?</motion.h2><motion.a href="mailto:aimanfarhan74@gmail.com" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: .5 }} transition={{ delay: .18, duration: .7, ease }}>aimanfarhan74@gmail.com <span>↗</span></motion.a><motion.div className="contact-links" initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: .5 }} transition={{ delay: .28, duration: .7, ease }}><a href="#contact">LinkedIn</a><a href="https://www.instagram.com/mku.works/">Instagram</a><a href="#contact">Issuu</a><a href="#contact">Download CV</a></motion.div></section>
       </main>
       <footer><span>© 2026 Manku</span><span>Designed through sections</span><button onClick={() => jump('top')}>Back to top ↑</button></footer>
 
@@ -123,6 +140,22 @@ export default function Portfolio() {
 
 function SectionHeading({ index, title, count }: { index: string; title: string; count?: string }) { return <motion.div className="section-heading" initial="hidden" whileInView="visible" viewport={{ once: false, amount: .45, margin: '-8% 0px -8% 0px' }} variants={{ hidden: {}, visible: { transition: { staggerChildren: .1 } } }}><motion.span variants={headingItem}>{index}</motion.span><motion.h2 variants={headingItem}>{title}</motion.h2>{count && <motion.small variants={headingItem}>{count}</motion.small>}</motion.div>; }
 const headingItem = { hidden: { opacity: 0, y: 22 }, visible: { opacity: 1, y: 0, transition: { duration: .7, ease } } };
+
+/** Loading Screen */
+function LoadingScreen() {
+  return <motion.div className="loading-screen" initial={{ opacity: 1 }} exit={{ clipPath: 'inset(0 0 100% 0)' }} transition={{ duration: .85, ease }}>
+    <div className="loading-topline"><span>Manku / Architecture portfolio</span><span>2026</span></div>
+    <div className="loading-drawing-wrap">
+      <motion.svg className="loading-drawing" viewBox="0 0 900 240" aria-hidden="true" initial={{ clipPath: 'inset(0 100% 0 0)' }} animate={{ clipPath: 'inset(0 0% 0 0)' }} transition={{ duration: 1.35, delay: .15, ease }}>
+        <path d="M30 200H870M90 200V92L166 40L242 92V200M350 200V112H650V200M704 200V58H810V200" />
+        <path d="M112 108H220M376 140H624M730 88H784M730 116H784M730 144H784" />
+        <path className="loading-accent-line" d="M242 92H350V112H650V58H704" />
+        <path d="M90 218H810" strokeDasharray="2 8" />
+      </motion.svg>
+    </div>
+    <div className="loading-bottomline"><strong>Drawing the section</strong><span>01 — 06</span></div>
+  </motion.div>;
+}
 function Stat({ value, label }: { value: string; label: string }) { return <motion.div className="stat" initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: .5 }} transition={{ duration: .65, ease }}><strong>{value}</strong><span>{label}</span></motion.div>; }
 function ProjectCard({ project, index, onOpen }: { project: Project; index: number; onOpen: () => void }) { return <motion.button className={`project-card card-${index % 4}`} onClick={onOpen} layout initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: .16, margin: '-5% 0px -5% 0px' }} transition={{ delay: (index % 2) * .1, duration: .8, ease }} whileHover={{ y: -8 }}><div className="card-sheet"><Sheet project={project} /></div><div className="card-info"><h3>{project.title}</h3><span>{project.category} / {project.year}</span></div><p>{project.summary}</p><i>View project ↗</i></motion.button>; }
 function ProjectModal({ project, onClose, onSelect }: { project: Project; onClose: () => void; onSelect: (project: Project) => void }) {

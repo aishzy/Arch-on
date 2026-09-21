@@ -36,6 +36,43 @@ button:focus-visible, a:focus-visible, summary:focus-visible {
   outline-offset: 5px;
 }
 
+/* Initial drawing reveal */
+.loading-screen {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: clamp(22px, 4vw, 56px) var(--pad);
+  background: var(--dark);
+  color: #eae9df;
+}
+.loading-topline,
+.loading-bottomline {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  color: #aeb5aa;
+  font: 10px var(--mono);
+  text-transform: uppercase;
+}
+.loading-topline span:first-child,
+.loading-bottomline strong { color: var(--rust); font-weight: 400; }
+.loading-drawing-wrap { width: 100%; }
+.loading-drawing {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+  stroke-width: 2;
+}
+.loading-drawing .loading-accent-line { stroke: var(--rust); stroke-width: 4; }
+
 /* Shared UI */
 .progress {
   position: fixed;
@@ -484,4 +521,5 @@ footer button { padding: 0; background: transparent; color: var(--muted); }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .project-card i, .circle-link, .filters button, .note-list summary b { transition: none; }
+  .loading-screen { clip-path: none !important; }
 }

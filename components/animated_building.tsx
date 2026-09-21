@@ -10,7 +10,15 @@ const lineTransition = (delay: number) => ({
 
 export default function AnimatedBuilding() {
   return (
-    <svg className="building-drawing" viewBox="0 0 1200 520" role="img" aria-label="Animated architectural section drawing">
+    <motion.svg
+      className="building-drawing"
+      viewBox="0 0 1200 520"
+      role="img"
+      aria-label="Animated architectural section drawing"
+      initial={{ clipPath: 'inset(0 100% 0 0)' }}
+      animate={{ clipPath: 'inset(0 0% 0 0)' }}
+      transition={{ duration: 1.6, delay: 0.15, ease: [0.76, 0, 0.24, 1] }}
+    >
       <defs>
         <pattern id="ground-hatch" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
           <path d="M0 0V12" stroke="currentColor" strokeWidth="1" opacity=".35" />
@@ -51,6 +59,6 @@ export default function AnimatedBuilding() {
       </motion.g>
 
       {[90, 1062, 1120].map((x, index) => <motion.g key={x} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 2 + index * .1, duration: .6 }}><circle className="building-tree" cx={x} cy={400} r={index === 1 ? 28 : 23} /><line className="building-tree" x1={x} y1="420" x2={x} y2="440" /></motion.g>)}
-    </svg>
+    </motion.svg>
   );
 }
