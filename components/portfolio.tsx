@@ -73,7 +73,7 @@ export default function Portfolio() {
         <a className="brand" href="#top" onClick={(event) => { event.preventDefault(); jump('top'); }}>Manku<span> / 26</span></a>
         <button className="menu-toggle" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}><span />Menu</button>
         <nav className={menuOpen ? 'nav nav-open' : 'nav'}>
-          {['projects', 'notes', 'about', 'contact'].map((item) => <button key={item} onClick={() => jump(item)}>{item}</button>)}
+          {['about', 'projects', 'notes', 'contact'].map((item) => <button key={item} onClick={() => jump(item)}>{item}</button>)}
         </nav>
       </header>
 
@@ -93,20 +93,20 @@ export default function Portfolio() {
           <div className="hero-index">Projects<br /><span>01—06</span></div>
         </section>
 
+        <section className="about section-shell" id="about">
+          <SectionHeading index="01" title="About" />
+          <div className="about-layout"><motion.p className="manifesto" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: .8, ease }}>I design from the inside out. I start with how someone arrives, where they pause and what they can see from there, then let the structure, the section and the facade grow from that.</motion.p><div className="about-details"><motion.p initial={{ opacity: 0, y: 22 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: .45 }} transition={{ delay: .12, duration: .7, ease }}>I am a fourth-year architecture student working in hand sketches, physical models and parametric scripts. I like projects where climate, materials and public life have to be solved together.</motion.p><div className="detail-row"><span>Currently</span><strong>Looking for an internship<br />starting January 2027</strong></div><div className="detail-row"><span>Tools</span><strong>Rhino / Grasshopper / Revit<br />QGIS / V-Ray / Photoshop</strong></div></div></div>
+        </section>
+
         <section className="projects section-shell" id="projects">
-          <SectionHeading index="01" title="Projects" count={`${visibleProjects.length} projects`} />
+          <SectionHeading index="02" title="Projects" count={`${visibleProjects.length} projects`} />
           <div className="filters">{categories.map((category) => <button key={category} className={active === category ? 'active' : ''} onClick={() => setActive(category)}>{category}</button>)}</div>
           <motion.div layout className="project-grid">{visibleProjects.map((project, index) => <ProjectCard key={project.slug} project={project} index={index} onOpen={() => setSelected(project)} />)}</motion.div>
         </section>
 
         <section className="notes section-shell" id="notes">
-          <SectionHeading index="02" title="Notes and ideas" />
+          <SectionHeading index="03" title="Notes and ideas" />
           <div className="note-list">{notes.map((note, index) => <motion.details key={note.title} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: .35 }} transition={{ delay: index * .08, duration: .7, ease }}><summary><span>{note.title}</span><small>{note.date}</small><b>+</b></summary><motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: .12, duration: .55, ease }}>{note.text}</motion.p></motion.details>)}</div>
-        </section>
-
-        <section className="about section-shell" id="about">
-          <SectionHeading index="03" title="About" />
-          <div className="about-layout"><motion.p className="manifesto" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: .8, ease }}>I design from the inside out. I start with how someone arrives, where they pause and what they can see from there, then let the structure, the section and the facade grow from that.</motion.p><div className="about-details"><motion.p initial={{ opacity: 0, y: 22 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: .45 }} transition={{ delay: .12, duration: .7, ease }}>I am a fourth-year architecture student working in hand sketches, physical models and parametric scripts. I like projects where climate, materials and public life have to be solved together.</motion.p><div className="detail-row"><span>Currently</span><strong>Looking for an internship<br />starting January 2027</strong></div><div className="detail-row"><span>Tools</span><strong>Rhino / Grasshopper / Revit<br />QGIS / V-Ray / Photoshop</strong></div></div></div>
         </section>
 
         <section className="contact section-shell" id="contact"><motion.p className="eyebrow" initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: .35 }} transition={{ duration: .6, ease }}>04 / Contact</motion.p><motion.h2 initial={{ opacity: 0, y: 36 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: .35 }} transition={{ delay: .08, duration: .8, ease }}>Have a project<br />in mind?</motion.h2><motion.a href="mailto:manku@gmail.com" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: .5 }} transition={{ delay: .18, duration: .7, ease }}>manku@gmail.com <span>↗</span></motion.a><motion.div className="contact-links" initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: .5 }} transition={{ delay: .28, duration: .7, ease }}><a href="#contact">LinkedIn</a><a href="#contact">Instagram</a><a href="#contact">Issuu</a><a href="#contact">Download CV</a></motion.div></section>
