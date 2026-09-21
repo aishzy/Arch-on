@@ -3,9 +3,9 @@
 import { motion } from 'framer-motion';
 
 const lineTransition = (delay: number) => ({
-  duration: 1.25,
+  duration: 5.7,
   delay,
-  ease: [0.16, 1, 0.3, 1] as const,
+  ease: [1.3, 1, 4.5, 5] as const,
 });
 
 export default function AnimatedBuilding() {

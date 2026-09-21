@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useScroll, useSpring } from 'framer-motion';
 import Lenis from 'lenis';
 import { notes, projects, type Project } from '@/lib/projects';
@@ -13,22 +13,52 @@ export default function Portfolio() {
   const [active, setActive] = useState('All');
   const [selected, setSelected] = useState<Project | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const lenisRef = useRef<Lenis | null>(null);
   const { scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
   const categories = ['All', ...Array.from(new Set(projects.map((project) => project.category)))];
   const visibleProjects = projects.filter((project) => active === 'All' || project.category === active);
 
   useEffect(() => {
-    const lenis = new Lenis({ duration: 1.15, smoothWheel: true, touchMultiplier: 1.15 });
+    const lenis = new Lenis({
+      duration: 1.15,
+      smoothWheel: true,
+      touchMultiplier: 1.15,
+      prevent: (node) => node.closest('.modal-backdrop') !== null,
+    });
+    lenisRef.current = lenis;
     let frame = 0;
     const raf = (time: number) => { lenis.raf(time); frame = requestAnimationFrame(raf); };
     frame = requestAnimationFrame(raf);
-    return () => { cancelAnimationFrame(frame); lenis.destroy(); };
+    return () => { cancelAnimationFrame(frame); lenis.destroy(); lenisRef.current = null; };
   }, []);
 
   useEffect(() => {
-    document.body.style.overflow = selected ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
+    const body = document.body;
+    if (!selected) {
+      lenisRef.current?.start();
+      body.style.position = '';
+      body.style.top = '';
+      body.style.width = '';
+      body.style.overflow = '';
+      return;
+    }
+
+    const scrollY = window.scrollY;
+    lenisRef.current?.stop();
+    body.style.position = 'fixed';
+    body.style.top = `-${scrollY}px`;
+    body.style.width = '100%';
+    body.style.overflow = 'hidden';
+
+    return () => {
+      body.style.position = '';
+      body.style.top = '';
+      body.style.width = '';
+      body.style.overflow = '';
+      window.scrollTo(0, scrollY);
+      lenisRef.current?.start();
+    };
   }, [selected]);
 
   const jump = (id: string) => {
@@ -104,9 +134,9 @@ function ProjectModal({ project, onClose, onSelect }: { project: Project; onClos
         <select id="projects-demo" value={project.slug} onChange={(event) => { const next = projects.find((item) => item.slug === event.target.value); if (next) onSelect(next); }}>
           {projects.map((item) => <option key={item.slug} value={item.slug}>{item.title}</option>)}
         </select>
-        <span>Scroll the sheet ↕</span>
+        <span>Scroll to browse ↕</span>
       </div>
-      <div className="modal-visual sheet-scroll" tabIndex={0} aria-label="Scrollable architectural sheet">
+      <div className="modal-visual sheet-scroll" aria-label="Architectural project sheets">
         <div className="sheet-stack">
           <div className="sheet-frame"><Sheet project={project} large /></div>
           <div className="sheet-caption"><span>Drawing {project.visual === 'tower' ? 'A-01' : 'A-07'}</span><span>Scale 1:200 / Scroll for full sheet</span></div>
