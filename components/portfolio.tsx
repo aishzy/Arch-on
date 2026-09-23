@@ -1,11 +1,13 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { AnimatePresence, motion, useScroll, useSpring } from 'framer-motion';
+import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
+import { AnimatePresence, motion, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion';
 import Lenis from 'lenis';
 import { notes, projects, type Project } from '@/lib/projects';
 import Sheet from './sheet';
 import AnimatedBuilding from './animated_building';
+import ConceptsGallery from './concepts-gallery/concepts_gallery';
+import iconUrl from '@/app/icon.png';
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -40,7 +42,7 @@ export default function Portfolio() {
       duration: 1.15,
       smoothWheel: true,
       touchMultiplier: 1.15,
-      prevent: (node) => node.closest('.modal-backdrop') !== null,
+      prevent: (node) => node.closest('.modal-backdrop, .velocity-viewer-backdrop, .cvg-viewer-backdrop') !== null,
     });
     lenisRef.current = lenis;
     let frame = 0;
@@ -78,7 +80,7 @@ export default function Portfolio() {
   }, [selected]);
 
   const jump = (id: string) => {
-    setMenuOpen(false);
+    setMenuOpen(false); 
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   };
 
@@ -87,21 +89,28 @@ export default function Portfolio() {
       <AnimatePresence>{isLoading && <LoadingScreen />}</AnimatePresence>
       <motion.div className="progress" style={{ scaleX: progress }} />
       <header className="site-header">
-        <a className="brand" href="#top" onClick={(event) => { event.preventDefault(); jump('top'); }}>Manku<span> / 26</span></a>
+        <a className="brand" href="#top" onClick={(event) => { event.preventDefault(); jump('top'); }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img className="brand-mark" src={iconUrl.src} alt="" aria-hidden="true" draggable={false} />Manku<span> / 26</span>
+        </a>
         <button className="menu-toggle" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}><span />Menu</button>
         <nav className={menuOpen ? 'nav nav-open' : 'nav'}>
-          {['about', 'projects', 'notes', 'contact'].map((item) => <button key={item} onClick={() => jump(item)}>{item}</button>)}
+          {['about', 'concepts', 'projects', 'notes', 'contact'].map((item) => <button key={item} onClick={() => jump(item)}>{item}</button>)}
         </nav>
       </header>
 
       <main id="top">
         <section className="hero">
+          <motion.div className="hero-signature" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: .5, duration: 1.3, ease }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={iconUrl.src} alt="" aria-hidden="true" draggable={false} />
+          </motion.div>
           <div className="hero-copy">
             <motion.p className="eyebrow" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .25, duration: .7, ease }}>Architecture student / Malaysia</motion.p>
             <motion.h1 initial={{ opacity: 0, y: 70 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .1, duration: 1.1, ease }}>Manku<span>.</span></motion.h1>
             <motion.div className="hero-bottom" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .8, duration: .8, ease }}>
               <p>Buildings that reward slow looking.<br />Drawings that make the idea visible.</p>
-              <button className="circle-link" onClick={() => jump('projects')} aria-label="Scroll to selected projects">↘</button>
+              <HeroProjectsButton onClick={() => jump('projects')} />
             </motion.div>
             <motion.div className="hero-building" initial={{ clipPath: 'inset(0 100% 0 0)' }} animate={{ clipPath: 'inset(0 0% 0 0)' }} transition={{ delay: .55, duration: 1.25, ease }}>
               <AnimatedBuilding />
@@ -117,27 +126,97 @@ export default function Portfolio() {
           <div className="about-stats"><Stat value="06" label="Selected studies" /><Stat value="04" label="Years in architecture" /><Stat value="01" label="Approach: inside out" /><Stat value="∞" label="Sheets still to draw" /></div>
         </section>
 
+        <section className="concepts section-shell" id="concepts">
+          <SectionHeading index="02" title="Concepts" count="scroll reveals" />
+          <ConceptsGallery />
+        </section>
+
         <section className="projects section-shell" id="projects">
-          <SectionHeading index="02" title="Projects" count={`${visibleProjects.length} projects`} />
+          <SectionHeading index="03" title="Projects" count={`${visibleProjects.length} projects`} />
           <motion.div className="section-lede" initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: .35, margin: '-8% 0px -8% 0px' }} transition={{ duration: .7, ease }}><span>Latest work</span><p>A working archive of buildings, territories and small experiments. Each project starts with a question about how space should feel.</p></motion.div>
           <div className="filters">{categories.map((category) => <button key={category} className={active === category ? 'active' : ''} onClick={() => setActive(category)}>{category}</button>)}</div>
           <motion.div layout className="project-grid">{visibleProjects.map((project, index) => <ProjectCard key={project.slug} project={project} index={index} onOpen={() => setSelected(project)} />)}</motion.div>
         </section>
 
         <section className="notes section-shell" id="notes">
-          <SectionHeading index="03" title="Notes and ideas" />
+          <SectionHeading index="04" title="Notes and ideas" />
           <div className="note-list">{notes.map((note, index) => <motion.details key={note.title} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: .35, margin: '-8% 0px -8% 0px' }} transition={{ delay: index * .08, duration: .7, ease }}><summary><span>{note.title}</span><small>{note.date}</small><b>+</b></summary><motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: .35 }} transition={{ delay: .12, duration: .55, ease }}>{note.text}</motion.p></motion.details>)}</div>
         </section>
 
         <section className="contact section-shell" id="contact"><motion.p className="eyebrow" initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: .35 }} transition={{ duration: .6, ease }}>04 / Contact</motion.p><motion.h2 initial={{ opacity: 0, y: 36 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: .35 }} transition={{ delay: .08, duration: .8, ease }}>Have a project<br />in mind?</motion.h2><motion.a href="mailto:aimanfarhan74@gmail.com" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: .5 }} transition={{ delay: .18, duration: .7, ease }}>aimanfarhan74@gmail.com <span>↗</span></motion.a><motion.div className="contact-links" initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: .5 }} transition={{ delay: .28, duration: .7, ease }}><a href="#contact">LinkedIn</a><a href="https://www.instagram.com/mku.works/">Instagram</a><a href="#contact">Issuu</a><a href="#contact">Download CV</a></motion.div></section>
       </main>
-      <footer><span>© 2026 Manku</span><span>Designed through sections</span><button onClick={() => jump('top')}>Back to top ↑</button></footer>
+      <footer>
+        <span className="footer-brand">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img className="footer-mark" src={iconUrl.src} alt="" aria-hidden="true" draggable={false} />© 2026 Manku
+        </span>
+        <span>Designed through sections</span><button onClick={() => jump('top')}>Back to top ↑</button>
+      </footer>
 
       <AnimatePresence>{selected && <ProjectModal project={selected} onClose={() => setSelected(null)} onSelect={setSelected} />}</AnimatePresence>
     </>
   );
 }
 
+/**
+ * Immersive hero call-to-action.
+ * A magnetic, spring-linked disc: a dashed drafting ring spins on idle and
+ * quickens on hover, the arrow dips toward the page while the whole control
+ * leans into the cursor, and a mono label slides out of the shoulder.
+ */
+function HeroProjectsButton({ onClick }: { onClick: () => void }) {
+  const reduce = useReducedMotion();
+  const [hover, setHover] = useState(false);
+  const ref = useRef<HTMLButtonElement>(null);
+
+  // Magnet values: pointer offset within the button (normalised -0.5..0.5).
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
+  const sx = useSpring(mx, { stiffness: 260, damping: 22, mass: 0.5 });
+  const sy = useSpring(my, { stiffness: 260, damping: 22, mass: 0.5 });
+  const x = useTransform(sx, [-0.5, 0.5], [-16, 16]);
+  const y = useTransform(sy, [-0.5, 0.5], [-16, 16]);
+
+  const move = (event: ReactPointerEvent<HTMLButtonElement>) => {
+    const rect = ref.current?.getBoundingClientRect();
+    if (!rect) return;
+    mx.set((event.clientX - rect.left) / rect.width - 0.5);
+    my.set((event.clientY - rect.top) / rect.height - 0.5);
+  };
+  const leave = () => { mx.set(0); my.set(0); setHover(false); };
+
+  return (
+    <motion.button
+      ref={ref}
+      className="circle-link"
+      type="button"
+      onClick={onClick}
+      aria-label="Scroll to selected projects"
+      onPointerMove={reduce ? undefined : move}
+      onPointerLeave={leave}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      onFocus={() => setHover(true)}
+      onBlur={() => setHover(false)}
+      whileHover={reduce ? undefined : { scale: 1.12 }}
+      whileTap={reduce ? undefined : { scale: 0.94 }}
+      transition={{ type: 'spring', stiffness: 340, damping: 18 }}
+      style={reduce ? undefined : { x, y }}
+    >
+      <svg className="circle-ring" viewBox="0 0 64 64" aria-hidden="true">
+        <circle className="circle-ring-track" cx="32" cy="32" r="29" />
+        <circle className="circle-ring-dash" cx="32" cy="32" r="29" />
+      </svg>
+      <motion.span
+        className="circle-arrow"
+        animate={{ rotate: hover && !reduce ? -45 : 0 }}
+        transition={{ type: 'spring', stiffness: 240, damping: 15 }}
+        aria-hidden="true"
+      >↘</motion.span>
+      <span className={`circle-label ${hover ? 'is-visible' : ''}`} aria-hidden="true">Selected projects <b>01 / 06</b></span>
+    </motion.button>
+  );
+}
 function SectionHeading({ index, title, count }: { index: string; title: string; count?: string }) { return <motion.div className="section-heading" initial="hidden" whileInView="visible" viewport={{ once: false, amount: .45, margin: '-8% 0px -8% 0px' }} variants={{ hidden: {}, visible: { transition: { staggerChildren: .1 } } }}><motion.span variants={headingItem}>{index}</motion.span><motion.h2 variants={headingItem}>{title}</motion.h2>{count && <motion.small variants={headingItem}>{count}</motion.small>}</motion.div>; }
 const headingItem = { hidden: { opacity: 0, y: 22 }, visible: { opacity: 1, y: 0, transition: { duration: .7, ease } } };
 
@@ -146,6 +225,8 @@ function LoadingScreen() {
   return <motion.div className="loading-screen" initial={{ opacity: 1 }} exit={{ clipPath: 'inset(0 0 100% 0)' }} transition={{ duration: .85, ease }}>
     <div className="loading-topline"><span>Manku / Architecture portfolio</span><span>2026</span></div>
     <div className="loading-drawing-wrap">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img className="loading-icon" src={iconUrl.src} alt="Manku monogram" draggable={false} />
       <motion.svg className="loading-drawing" viewBox="0 0 900 240" aria-hidden="true" initial={{ clipPath: 'inset(0 100% 0 0)' }} animate={{ clipPath: 'inset(0 0% 0 0)' }} transition={{ duration: 1.35, delay: .15, ease }}>
         <path d="M30 200H870M90 200V92L166 40L242 92V200M350 200V112H650V200M704 200V58H810V200" />
         <path d="M112 108H220M376 140H624M730 88H784M730 116H784M730 144H784" />
